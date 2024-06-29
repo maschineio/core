@@ -7,7 +7,7 @@ import (
 	"maschine.io/core/token"
 )
 
-func TestDataType_String(t *testing.T) {
+func TestDataTypeString(t *testing.T) {
 	tok := token.String
 
 	assert.Equal(t, "String", tok.String())

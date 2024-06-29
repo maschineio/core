@@ -8,12 +8,12 @@ import (
 	"maschine.io/core/token"
 )
 
-func TestTokenType_String(t *testing.T) {
+func TestTokenTypeString(t *testing.T) {
 	tok := token.End
 	assert.Equal(t, "End", tok.String())
 }
 
-func TestTokenType_IsComparator(t *testing.T) {
+func TestTokenTypeIsComparator(t *testing.T) {
 	for _, tt := range []struct {
 		tok      token.TokenType
 		expected any

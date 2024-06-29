@@ -7,7 +7,7 @@ import (
 	"maschine.io/core"
 )
 
-func Test_GetDurationFromTimestamp_emptyTimestamp(t *testing.T) {
+func Test_GetDurationFromTimestampEmptyTimestamp(t *testing.T) {
 	ts := ""
 	result, err := core.GetDurationFromTimestamp(ts)
 	assert.NotNil(t, err)
@@ -17,14 +17,14 @@ func Test_GetDurationFromTimestamp_emptyTimestamp(t *testing.T) {
 
 //
 
-func Test_GetDurationFromTimestamp_validTimestamp(t *testing.T) {
+func Test_GetDurationFromTimestampValidTimestamp(t *testing.T) {
 	ts := "2050-01-02T15:04:05Z"
 	result, err := core.GetDurationFromTimestamp(ts)
 	assert.Nil(t, err)
 	assert.NotNil(t, result)
 }
 
-func Test_GetDurationFromTimestamp_timeIsExpired(t *testing.T) {
+func Test_GetDurationFromTimestampTimeIsExpired(t *testing.T) {
 	ts := "2023-08-03T15:04:05Z"
 	result, err := core.GetDurationFromTimestamp(ts)
 	assert.NotNil(t, err)

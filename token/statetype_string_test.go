@@ -7,7 +7,7 @@ import (
 	"maschine.io/core/token"
 )
 
-func TestStateType_String(t *testing.T) {
+func TestStateTypeString(t *testing.T) {
 	tok := token.TaskType
 
 	assert.Equal(t, "TaskType", tok.String())
