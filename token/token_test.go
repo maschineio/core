@@ -132,7 +132,7 @@ func TestTokenTokenMapToken(t *testing.T) {
 	assert.Equal(t, "map[]", tok.String())
 }
 
-func TestTokenContextPathToken_InvalidJSONPath(t *testing.T) {
+func TestTokenContextPathTokenInvalidJSONPath(t *testing.T) {
 	_, err := token.NewContextPathToken(token.ContextObject, "$.test")
 	assert.NotNil(t, err)
 	assert.Equal(t, "expected context object json path", err.Error())
