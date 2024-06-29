@@ -7,12 +7,12 @@ import (
 	"maschine.io/core/token"
 )
 
-func TestTokenMapGetComparatorTokenCount_EqualsZero(t *testing.T) {
+func TestTokenMapGetComparatorTokenCountEqualsZero(t *testing.T) {
 	tokMap := token.Map{}
 	assert.Equal(t, 0, tokMap.GetComparatorTokenCount())
 }
 
-func TestTokenMapGetComparatorTokenCount_EqualsOne(t *testing.T) {
+func TestTokenMapGetComparatorTokenCountEqualsOne(t *testing.T) {
 	tokMap := token.Map{}
 	err := tokMap.Append(token.NewBoolToken(token.IsArray, true))
 	assert.Nil(t, err)
@@ -30,14 +30,14 @@ func TestTokenMapAppend_TokenAlreadyExists(t *testing.T) {
 	assert.Equal(t, "'IsArray' already exists", err.Error())
 }
 
-func TestTokenMapGetComparator_NoComparatorFound(t *testing.T) {
+func TestTokenMapGetComparatorNoComparatorFound(t *testing.T) {
 	tokMap := token.Map{}
 	tok, err := tokMap.GetComparator()
 	assert.Nil(t, tok)
 	assert.NotNil(t, "", err.Error())
 }
 
-func TestTokenMapGetComparator_ToManyComparatorsFound(t *testing.T) {
+func TestTokenMapGetComparatorToManyComparatorsFound(t *testing.T) {
 	tokMap := token.Map{}
 	err := tokMap.Append(token.NewBoolToken(token.IsArray, true))
 	assert.Nil(t, err)
@@ -50,7 +50,7 @@ func TestTokenMapGetComparator_ToManyComparatorsFound(t *testing.T) {
 	assert.Equal(t, "to many comparators found", err.Error())
 }
 
-func TestTokenMapGetComparator_Valid(t *testing.T) {
+func TestTokenMapGetComparatorValid(t *testing.T) {
 	tokMap := token.Map{}
 	err := tokMap.Append(token.NewBoolToken(token.IsArray, true))
 	assert.Nil(t, err)
@@ -63,20 +63,20 @@ func TestTokenMapGetComparator_Valid(t *testing.T) {
 	assert.NotNil(t, tok)
 }
 
-func TestTokenMap_NewTokenMap_NoTokens(t *testing.T) {
+func TestTokenMap_NewTokenMapNoTokens(t *testing.T) {
 	tm, err := token.NewTokenMap()
 	assert.Nil(t, err)
 	assert.Equal(t, token.Map{}, tm)
 }
 
-func TestTokenMapNewTokenMap_DuplicateEntry(t *testing.T) {
+func TestTokenMapNewTokenMapDuplicateEntry(t *testing.T) {
 	t1 := token.NewBoolToken(token.End, true)
 	_, err := token.NewTokenMap(t1, t1)
 	assert.NotNil(t, err)
 	assert.Equal(t, "'End' already exists", err.Error())
 }
 
-func TestTokenMapNewTokenMap_Valid(t *testing.T) {
+func TestTokenMapNewTokenMapValid(t *testing.T) {
 	t1 := token.NewBoolToken(token.End, true)
 	tm, err := token.NewTokenMap(t1)
 	assert.Nil(t, err)

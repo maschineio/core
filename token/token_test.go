@@ -65,7 +65,7 @@ func TestTokenJSONPathToken(t *testing.T) {
 	assert.Equal(t, "$.heartbeat", tok.String())
 }
 
-func TestTokenJSONPathToken_Failing(t *testing.T) {
+func TestTokenJSONPathTokenFailing(t *testing.T) {
 	_, err := token.NewJSONPathToken(token.HeartbeatSecondsPath, "$heartbeat")
 	assert.NotNil(t, err)
 	assert.Equal(t, "parsing error: $heartbeat\t:1:2 - 1:11 unexpected Ident while scanning operator", err.Error())
@@ -132,19 +132,19 @@ func TestTokenTokenMapToken(t *testing.T) {
 	assert.Equal(t, "map[]", tok.String())
 }
 
-func TestTokenContextPathToken_InvalidJSONPath(t *testing.T) {
+func TestTokenContextPathTokenInvalidJSONPath(t *testing.T) {
 	_, err := token.NewContextPathToken(token.ContextObject, "$.test")
 	assert.NotNil(t, err)
 	assert.Equal(t, "expected context object json path", err.Error())
 }
 
-func TestTokenContextPathToken_InvalidContextPath(t *testing.T) {
+func TestTokenContextPathTokenInvalidContextPath(t *testing.T) {
 	_, err := token.NewContextPathToken(token.ContextObject, "$$.[]test")
 	assert.NotNil(t, err)
 	assert.Equal(t, "parsing error: $.[]test\t:1:3 - 1:4 unexpected \"[\" while scanning JSON select expected Ident, \".\" or \"*\"", err.Error())
 }
 
-func TestTokenContextPathToken_ValidContextPath(t *testing.T) {
+func TestTokenContextPathTokenValidContextPath(t *testing.T) {
 	tok, err := token.NewContextPathToken(token.ContextObject, "$$.test")
 	assert.Nil(t, err)
 	assert.Equal(t, "ContextPath", tok.DataType().String())
