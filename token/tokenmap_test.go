@@ -21,7 +21,7 @@ func TestTokenMapGetComparatorTokenCountEqualsOne(t *testing.T) {
 	assert.Equal(t, 1, tokMap.GetComparatorTokenCount())
 }
 
-func TestTokenMapAppend_TokenAlreadyExists(t *testing.T) {
+func TestTokenMapAppendTokenAlreadyExists(t *testing.T) {
 	tokMap := token.Map{}
 	err := tokMap.Append(token.NewBoolToken(token.IsArray, true))
 	assert.Nil(t, err)
