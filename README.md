@@ -1,0 +1,2 @@
+# core
+Maschine Core
