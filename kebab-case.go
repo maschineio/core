@@ -20,30 +20,31 @@ func delimiterCase(s string, delimiter rune, upperCase bool) string {
 		adjustCase = toUpper
 	}
 
-	var prev rune
-	var curr rune
-	for _, next := range s {
+	processChar := func(buffer *[]rune, prev, curr, next rune, delimiter rune, adjustCase func(rune) rune) {
 		if isDelimiter(curr) {
 			if !isDelimiter(prev) {
-				buffer = append(buffer, delimiter)
+				*buffer = append(*buffer, delimiter)
 			}
 		} else if isUpper(curr) {
 			if isLower(prev) || (isUpper(prev) && isLower(next)) {
-				buffer = append(buffer, delimiter)
+				*buffer = append(*buffer, delimiter)
 			}
-			buffer = append(buffer, adjustCase(curr))
+			*buffer = append(*buffer, adjustCase(curr))
 		} else if curr != 0 {
-			buffer = append(buffer, adjustCase(curr))
+			*buffer = append(*buffer, adjustCase(curr))
 		}
+	}
+
+	var prev rune
+	var curr rune
+	for _, next := range s {
+		processChar(&buffer, prev, curr, next, delimiter, adjustCase)
 		prev = curr
 		curr = next
 	}
 
 	if len(s) > 0 {
-		if isUpper(curr) && isLower(prev) && prev != 0 {
-			buffer = append(buffer, delimiter)
-		}
-		buffer = append(buffer, adjustCase(curr))
+		processChar(&buffer, prev, curr, 0, delimiter, adjustCase)
 	}
 
 	return string(buffer)

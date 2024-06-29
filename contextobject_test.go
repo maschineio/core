@@ -24,5 +24,5 @@ func TestContextObjectKey(t *testing.T) {
 func TestContextObjectJSONPath(t *testing.T) {
 	result := core.NewContextObject(contextObject)
 	assert.NotNil(t, result)
-	assert.Equal(t, contextObject, result.JSONPath())
+	assert.Equal(t, "$.context.object", result.JSONPath())
 }
