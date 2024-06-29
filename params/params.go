@@ -208,63 +208,93 @@ func GetParamDefault[T any](params *Parameter, name string, defaultValue T) (T, 
 // ProcessParameters processes the state parameters
 // if @params is nil, the functions returns nil
 func ProcessParameters(params *Parameter, input any) (*Parameter, error) {
-
 	result := NewDefaultParameter()
 	if params == nil {
 		return params, nil
 	}
 
-	var jsonPath *gabs.Container
-	var err error
-
-	if input != nil {
-		switch i := input.(type) {
-		case []byte:
-			jsonPath, err = gabs.ParseJSON(i)
-			if err != nil {
-				return nil, err
-			}
-		case any:
-			jsonPath = gabs.Wrap(input)
-		default:
-			return nil, fmt.Errorf("unexpected input type: got %T", input)
-		}
+	jsonPath, err := parseInput(input)
+	if err != nil {
+		return nil, err
 	}
 
-	for _, key := range (*params).Keys() {
-		value := params.Get(key)
-		switch vt := value.(type) {
-		case token.ReplacementKV[string]:
-			// vt.Key.Key() contains the new key to be used
-			// we know that the result value of the DataValue is a string
-			value := vt.Value.Value()
-			switch vt.Value.Type() {
-			case token.JSONPath:
-				// TODO: wenn der jsonpath nur "$" enthält kracht es hier
-				result.Add(vt.Key.Key(), jsonPath.Path(value[2:]).Data())
-
-			case token.String:
-				result.Add(vt.Key.Key(), value)
-
-			default:
-				return nil, fmt.Errorf("check/convert vt.Value.Type() for type: %v", vt.Value.Type())
-			}
-		case token.ReplacementKV[core.Replaceable]:
-			p := vt.Value.Value().JSONPath()
-			result.Add(key, jsonPath.Path(p[2:]).Data())
-
-		case token.ReplacementKV[token.Token]:
-			v, err := replace.ProcessReplacementKVToken(vt.Value, input)
-			if err != nil {
-				return nil, err
-			}
-			result.Add(key, v)
-		case map[string]any:
-			result.Add(key, replace.ReplaceMap(&vt, input, jsonPath))
-		default:
-			// everything that comes here is inserted 1:1 into the parameters
-			result.Add(key, vt)
-		}
+	err = processKeys(params, result, jsonPath, input)
+	if err != nil {
+		return nil, err
 	}
+
 	return result, nil
+}
+
+func parseInput(input any) (*gabs.Container, error) {
+	if input == nil {
+		return nil, nil
+	}
+
+	switch i := input.(type) {
+	case []byte:
+		jsonPath, err := gabs.ParseJSON(i)
+		if err != nil {
+			return nil, err
+		}
+		return jsonPath, nil
+	case any:
+		return gabs.Wrap(input), nil
+	default:
+		return nil, fmt.Errorf("unexpected input type: got %T", input)
+	}
+}
+
+func processKeys(params *Parameter, result *Parameter, jsonPath *gabs.Container, input any) error {
+	for _, key := range params.Keys() {
+		value := params.Get(key)
+		if err := processValue(key, value, result, jsonPath, input); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func processValue(key string, value any, result *Parameter, jsonPath *gabs.Container, input any) error {
+	switch vt := value.(type) {
+	case token.ReplacementKV[string]:
+		return processStringReplacementKV(vt, result, jsonPath)
+	case token.ReplacementKV[core.Replaceable]:
+		return processReplaceableReplacementKV(key, vt, result, jsonPath)
+	case token.ReplacementKV[token.Token]:
+		return processTokenReplacementKV(key, vt, result, input)
+	case map[string]any:
+		result.Add(key, replace.ReplaceMap(&vt, input, jsonPath))
+	default:
+		result.Add(key, vt)
+	}
+	return nil
+}
+
+func processStringReplacementKV(vt token.ReplacementKV[string], result *Parameter, jsonPath *gabs.Container) error {
+	value := vt.Value.Value()
+	switch vt.Value.Type() {
+	case token.JSONPath:
+		result.Add(vt.Key.Key(), jsonPath.Path(value[2:]).Data())
+	case token.String:
+		result.Add(vt.Key.Key(), value)
+	default:
+		return fmt.Errorf("check/convert vt.Value.Type() for type: %v", vt.Value.Type())
+	}
+	return nil
+}
+
+func processReplaceableReplacementKV(key string, vt token.ReplacementKV[core.Replaceable], result *Parameter, jsonPath *gabs.Container) error {
+	p := vt.Value.Value().JSONPath()
+	result.Add(key, jsonPath.Path(p[2:]).Data())
+	return nil
+}
+
+func processTokenReplacementKV(key string, vt token.ReplacementKV[token.Token], result *Parameter, input any) error {
+	v, err := replace.ProcessReplacementKVToken(vt.Value, input)
+	if err != nil {
+		return err
+	}
+	result.Add(key, v)
+	return nil
 }
