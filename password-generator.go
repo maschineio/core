@@ -5,7 +5,6 @@ import (
 )
 
 // GenerateSimplePassword creates a password with the given length.
-// TODO: use hashicorp vault with policies to generate a password
 // look at this: https://github.com/1Password/spg
 func GenerateSimplePassword(length int) (string, error) {
 	// Definieren Sie die Zeichensätze für das Passwort.
