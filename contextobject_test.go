@@ -7,19 +7,19 @@ import (
 	"maschine.io/core"
 )
 
-func Test_contextObjectCreate(t *testing.T) {
+func TestContextObjectCreate(t *testing.T) {
 	result := core.NewContextObject("$$.context.object")
 	assert.NotNil(t, result)
 	assert.Equal(t, "context($$.context.object).path($.context.object)", result.String())
 }
 
-func Test_contextObjectKey(t *testing.T) {
+func TestContextObjectKey(t *testing.T) {
 	result := core.NewContextObject("$$.context.object")
 	assert.NotNil(t, result)
 	assert.Equal(t, "$$.context.object", result.Key())
 }
 
-func Test_contextObjectJSONPath(t *testing.T) {
+func TestContextObjectJSONPath(t *testing.T) {
 	result := core.NewContextObject("$$.context.object")
 	assert.NotNil(t, result)
 	assert.Equal(t, "$.context.object", result.JSONPath())

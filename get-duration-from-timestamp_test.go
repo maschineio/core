@@ -24,7 +24,7 @@ func Test_GetDurationFromTimestampValidTimestamp(t *testing.T) {
 	assert.NotNil(t, result)
 }
 
-func Test_GetDurationFromTimestampTimeIsExpired(t *testing.T) {
+func TestGetDurationFromTimestampTimeIsExpired(t *testing.T) {
 	ts := "2023-08-03T15:04:05Z"
 	result, err := core.GetDurationFromTimestamp(ts)
 	assert.NotNil(t, err)
