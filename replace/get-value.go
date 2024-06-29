@@ -16,7 +16,6 @@ func GetValue(key string, value any, input any, jsonPath *gabs.Container) (strin
 		value := vt.Value.Value()
 		switch vt.Value.Type() {
 		case token.JSONPath:
-			// TODO: wenn der jsonpath nur "$" enthält kracht es hier
 			return vt.Key.Key(), jsonPath.Path(value[2:]).Data(), nil
 		case token.String:
 			return vt.Key.Key(), value, nil
