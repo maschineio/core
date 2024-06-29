@@ -68,7 +68,6 @@ func (c *Context) CredentialsExists() bool {
 // GetInputAsInterface returns the input as interface{}
 func (c *Context) GetInputAsInterface() (any, error) {
 	value := c.GetInput()
-	// TODO! error???
 	return core.InputToBytes(value)
 }
 
