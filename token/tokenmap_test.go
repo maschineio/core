@@ -63,7 +63,7 @@ func TestTokenMapGetComparatorValid(t *testing.T) {
 	assert.NotNil(t, tok)
 }
 
-func TestTokenMap_NewTokenMapNoTokens(t *testing.T) {
+func TestTokenMapNewTokenMapNoTokens(t *testing.T) {
 	tm, err := token.NewTokenMap()
 	assert.Nil(t, err)
 	assert.Equal(t, token.Map{}, tm)
