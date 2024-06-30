@@ -104,8 +104,14 @@ func TestGetValueTypeString(t *testing.T) {
 	assert.Equal(t, "String", v.Type().String()) // we are dealing with JSON float all the time
 }
 
-func TestGetValueTypeSValue(t *testing.T) {
+func TestGetValueTypeValuePtr(t *testing.T) {
 	v, err := core.GetTypedValue(core.NewBoolValue(true))
+	assert.Nil(t, err)
+	assert.Equal(t, "Bool", v.Type().String()) // we are dealing with JSON float all the time
+}
+
+func TestGetValueTypeValue(t *testing.T) {
+	v, err := core.GetTypedValue(*core.NewBoolValue(true))
 	assert.Nil(t, err)
 	assert.Equal(t, "Bool", v.Type().String()) // we are dealing with JSON float all the time
 }
