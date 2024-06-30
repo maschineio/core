@@ -1,0 +1,16 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Test Coverage",
+      "type": "shell",
+      "command": "go",
+      "args": ["test", "-coverprofile=coverage.out", "./..."],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    }
+  ]
+}
