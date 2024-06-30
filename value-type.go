@@ -15,10 +15,9 @@ type Value struct {
 	ptStringMapValue *map[string]any
 	bytesValue       []byte
 	stringValue      string
-	// stringSliceValue []string
-	floatValue float64
-	anyValue   any
-	sliceValue []any
+	floatValue       float64
+	anyValue         any
+	sliceValue       []any
 }
 
 func (v *Value) Type() Type {
@@ -79,9 +78,6 @@ func (v *Value) MarshalJSON() (r []byte, err error) {
 		return json.Marshal(nil)
 	case Slice:
 		return json.Marshal(v.sliceValue)
-	// case StringSlice:
-	// 	fmt.Printf("#### stringslice value: %+v", v.stringSliceValue)
-	// 	return json.Marshal(v.stringSliceValue)
 	case Unknown:
 		return json.Marshal(nil)
 	default:
@@ -213,10 +209,6 @@ func NewSliceValue(s []any) *Value {
 	return &Value{sliceValue: s, dataType: Slice}
 }
 
-// func NewStringSliceValue(s []string) Value {
-// 	return Value{stringSliceValue: s, dataType: Slice}
-// }
-
 func NewUnknownValue() *Value {
 	return &Value{dataType: Unknown}
 }
@@ -235,8 +227,6 @@ func GetTypedValue(val any) (result *Value, err error) {
 		return NewStringMapValue(t), nil
 	case *map[string]any:
 		return NewPointerStringMapValue(t), nil
-	// case []string:
-	// 	return NewStringSliceValue(t), nil
 	case []any:
 		return NewSliceValue(t), nil
 	case int:
