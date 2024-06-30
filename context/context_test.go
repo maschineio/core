@@ -51,3 +51,11 @@ func TestContextGetEmptyInput(t *testing.T) {
 
 	assert.Equal(t, []byte("{}"), result)
 }
+
+func TestContextSetInput(t *testing.T) {
+	ctx := context.Context{}
+	ctx.SetInput([]byte("test"))
+	result := ctx.GetInput()
+
+	assert.Equal(t, []byte("test"), result)
+}
