@@ -138,46 +138,82 @@ func TestValueType(t *testing.T) {
 func TestUnknownValueString(t *testing.T) {
 	value := core.NewUnknownValue()
 	assert.Equal(t, "unknown", value.String())
+
+	result, err := value.MarshalJSON()
+	assert.Nil(t, err)
+	assert.Equal(t, []uint8([]byte{0x6e, 0x75, 0x6c, 0x6c}), result) // represents json null
 }
 
 func TestNilValueString(t *testing.T) {
 	value := core.NewNilValue()
 	assert.Equal(t, "<nil>", value.String())
+
+	result, err := value.MarshalJSON()
+	assert.Nil(t, err)
+	assert.Equal(t, []uint8([]byte{0x6e, 0x75, 0x6c, 0x6c}), result) // represents json null
 }
 
 func TestStringValueString(t *testing.T) {
 	value := core.NewStringValue("hello")
 	assert.Equal(t, "hello", value.String())
+
+	result, err := value.MarshalJSON()
+	assert.Nil(t, err)
+	assert.Equal(t, []byte("hello"), result)
 }
 
 func TestBoolValueString(t *testing.T) {
 	value := core.NewBoolValue(true)
 	assert.Equal(t, "true", value.String())
+
+	result, err := value.MarshalJSON()
+	assert.Nil(t, err)
+	assert.Equal(t, []byte("true"), result)
 }
 
 func TestBytesValueString(t *testing.T) {
 	value := core.NewBytesValue([]byte("test"))
 	assert.Equal(t, "test", value.String())
+
+	result, err := value.MarshalJSON()
+	assert.Nil(t, err)
+	assert.Equal(t, []byte("test"), result)
 }
 
 func TestFloatValueString(t *testing.T) {
 	value := core.NewFloat32Value(float32(32))
 	assert.Equal(t, "32", value.String())
+
+	result, err := value.MarshalJSON()
+	assert.Nil(t, err)
+	assert.Equal(t, []byte("32"), result)
 }
 
 func TestStringMapValueString(t *testing.T) {
 	value := core.NewStringMapValue(map[string]any{"test": 42})
 	assert.Equal(t, "map[test:42]", value.String())
+
+	result, err := value.MarshalJSON()
+	assert.Nil(t, err)
+	assert.Equal(t, []byte(`{"test":42}`), result)
 }
 
 func TestPointerStringMapValueString(t *testing.T) {
 	value := core.NewPointerStringMapValue(&map[string]any{"test": 42})
 	assert.Equal(t, "map[test:42]", value.String())
+
+	result, err := value.MarshalJSON()
+	assert.Nil(t, err)
+	assert.Equal(t, []byte(`{"test":42}`), result)
 }
 
 func TestPointerStringMapValueStringNil(t *testing.T) {
 	value := core.NewPointerStringMapValue(nil)
 	assert.Equal(t, "unknown", value.String())
+
+	result, err := value.MarshalJSON()
+	assert.Nil(t, err)
+	assert.Equal(t, []byte(`null`), result)
 }
 
 func TestSliceValueString(t *testing.T) {
@@ -188,4 +224,8 @@ func TestSliceValueString(t *testing.T) {
 func TestBoolValue(t *testing.T) {
 	value := core.NewBoolValue(true)
 	assert.True(t, value.BoolValue())
+
+	result, err := value.MarshalJSON()
+	assert.Nil(t, err)
+	assert.Equal(t, []byte(`true`), result)
 }
