@@ -9,9 +9,7 @@ import (
 func InputToBytes(input any) (result []byte, err error) {
 	switch t := input.(type) {
 	case []byte:
-		if err := json.Unmarshal(t, &result); err != nil {
-			return nil, err
-		}
+		return input.([]byte), nil
 	case map[string]any:
 		if result, err := json.Marshal(t); err != nil {
 			return nil, err
@@ -23,5 +21,4 @@ func InputToBytes(input any) (result []byte, err error) {
 	default:
 		return nil, fmt.Errorf("core: unknown input type: got %T", input)
 	}
-	return
 }

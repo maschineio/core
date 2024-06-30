@@ -20,3 +20,17 @@ func TestCoreInputToBytesWithPointerToBytesError(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.EqualError(t, err, "core: unknown input type: got *[]uint8")
 }
+
+func TestCoreInputToBytesWithBytes(t *testing.T) {
+	testCase := []byte(`{"test": "test"}`)
+	result, err := core.InputToBytes(testCase)
+	assert.Nil(t, err)
+	assert.Equal(t, []uint8([]byte{0x7b, 0x22, 0x74, 0x65, 0x73, 0x74, 0x22, 0x3a, 0x20, 0x22, 0x74, 0x65, 0x73, 0x74, 0x22, 0x7d}), result)
+}
+
+func TestCoreInputToBytesWithValue(t *testing.T) {
+	testCase := core.NewBoolValue(true)
+	result, err := core.InputToBytes(*testCase)
+	assert.Nil(t, err)
+	assert.Equal(t, []byte{0x74, 0x72, 0x75, 0x65}, result)
+}
