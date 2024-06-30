@@ -219,6 +219,10 @@ func TestPointerStringMapValueStringNil(t *testing.T) {
 func TestSliceValueString(t *testing.T) {
 	value := core.NewSliceValue([]any{42})
 	assert.Equal(t, "[42]", value.String())
+
+	result, err := value.MarshalJSON()
+	assert.Nil(t, err)
+	assert.Equal(t, []byte(`[42]`), result)
 }
 
 func TestBoolValue(t *testing.T) {
