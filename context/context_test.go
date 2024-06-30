@@ -16,3 +16,12 @@ func TestContextSetGet(t *testing.T) {
 	assert.True(t, exists)
 	assert.Equal(t, 42, result)
 }
+
+func TestContextGetCredentialsNonExist(t *testing.T) {
+	ctx := context.Context{}
+
+	result, exists := ctx.GetCredential("test")
+
+	assert.Nil(t, result)
+	assert.False(t, exists)
+}
