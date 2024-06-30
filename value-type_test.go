@@ -242,3 +242,12 @@ func TestBoolValueAsYAMLBytes(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, []uint8([]byte{0x74, 0x72, 0x75, 0x65, 0xa}), result)
 }
+
+func TestBoolValueAsAny(t *testing.T) {
+	value := core.NewBoolValue(true)
+	assert.True(t, value.BoolValue())
+
+	result, err := value.AsAny()
+	assert.Nil(t, err)
+	assert.Equal(t, true, result)
+}
