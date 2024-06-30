@@ -251,3 +251,12 @@ func TestBoolValueAsAny(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, true, result)
 }
+
+func TestValueAsJSONString(t *testing.T) {
+	value := core.NewBoolValue(true)
+	assert.True(t, value.BoolValue())
+
+	result, err := value.AsJSONString()
+	assert.Nil(t, err)
+	assert.Equal(t, "true", result)
+}
