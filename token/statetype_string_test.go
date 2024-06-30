@@ -12,3 +12,11 @@ func TestStateTypeString(t *testing.T) {
 
 	assert.Equal(t, "TaskType", tok.String())
 }
+
+func TestStateTypeError(t *testing.T) {
+	testCases := []token.StateType{
+		-1, // less than 0
+	}
+	result := testCases[0].String()
+	assert.Equal(t, "StateType(-1)", result)
+}
