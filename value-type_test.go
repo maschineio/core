@@ -134,3 +134,53 @@ func TestValueType(t *testing.T) {
 	assert.Equal(t, core.Type(3), value.Type())
 	assert.True(t, valid)
 }
+
+func TestUnknownValueString(t *testing.T) {
+	value := core.NewUnknownValue()
+	assert.Equal(t, "unknown", value.String())
+}
+
+func TestNilValueString(t *testing.T) {
+	value := core.NewNilValue()
+	assert.Equal(t, "<nil>", value.String())
+}
+
+func TestStringValueString(t *testing.T) {
+	value := core.NewStringValue("hello")
+	assert.Equal(t, "hello", value.String())
+}
+
+func TestBoolValueString(t *testing.T) {
+	value := core.NewBoolValue(true)
+	assert.Equal(t, "true", value.String())
+}
+
+func TestBytesValueString(t *testing.T) {
+	value := core.NewBytesValue([]byte("test"))
+	assert.Equal(t, "test", value.String())
+}
+
+func TestFloatValueString(t *testing.T) {
+	value := core.NewFloat32Value(float32(32))
+	assert.Equal(t, "32", value.String())
+}
+
+func TestStringMapValueString(t *testing.T) {
+	value := core.NewStringMapValue(map[string]any{"test": 42})
+	assert.Equal(t, "map[test:42]", value.String())
+}
+
+func TestPointerStringMapValueString(t *testing.T) {
+	value := core.NewPointerStringMapValue(&map[string]any{"test": 42})
+	assert.Equal(t, "map[test:42]", value.String())
+}
+
+func TestPointerStringMapValueStringNil(t *testing.T) {
+	value := core.NewPointerStringMapValue(nil)
+	assert.Equal(t, "unknown", value.String())
+}
+
+func TestSliceValueString(t *testing.T) {
+	value := core.NewSliceValue([]any{42})
+	assert.Equal(t, "[42]", value.String())
+}
