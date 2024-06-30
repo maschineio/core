@@ -77,3 +77,13 @@ func TestContextGetValue(t *testing.T) {
 	assert.Equal(t, 42, result)
 	assert.Nil(t, result2)
 }
+
+func TestContextInputToBytes(t *testing.T) {
+	testCase := map[string]any{"test": 42}
+	ctx := context.Context{}
+	ctx.Set(context.INPUTKEY, testCase)
+	_, err := ctx.GetInputAsInterface()
+
+	assert.Nil(t, err)
+	//assert.Nil(t, result)
+}
