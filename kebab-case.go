@@ -6,21 +6,16 @@ package core
 import "strings"
 
 func KebabCase(s string) string {
-	return delimiterCase(s, '-', false)
+	return delimiterCase(s, '-')
 }
 
-// delimiterCase converts a string into snake_case or kebab-case depending on the delimiter passed
-// as second argument. When upperCase is true the result will be UPPER_SNAKE_CASE or UPPER-KEBAB-CASE.
-func delimiterCase(s string, delimiter rune, upperCase bool) string {
+// delimiterCase converts a string into kebab-case depending on the delimiter passed
+// as second argument.
+func delimiterCase(s string, delimiter rune) string {
 	s = strings.TrimSpace(s)
 	buffer := make([]rune, 0, len(s)+3)
 
-	adjustCase := toLower
-	if upperCase {
-		adjustCase = toUpper
-	}
-
-	processChar := func(buffer *[]rune, prev, curr, next rune, delimiter rune, adjustCase func(rune) rune) {
+	processChar := func(buffer *[]rune, prev, curr, next rune, delimiter rune, toLower func(rune) rune) {
 		if isDelimiter(curr) {
 			if !isDelimiter(prev) {
 				*buffer = append(*buffer, delimiter)
@@ -29,22 +24,22 @@ func delimiterCase(s string, delimiter rune, upperCase bool) string {
 			if isLower(prev) || (isUpper(prev) && isLower(next)) {
 				*buffer = append(*buffer, delimiter)
 			}
-			*buffer = append(*buffer, adjustCase(curr))
+			*buffer = append(*buffer, toLower(curr))
 		} else if curr != 0 {
-			*buffer = append(*buffer, adjustCase(curr))
+			*buffer = append(*buffer, toLower(curr))
 		}
 	}
 
 	var prev rune
 	var curr rune
 	for _, next := range s {
-		processChar(&buffer, prev, curr, next, delimiter, adjustCase)
+		processChar(&buffer, prev, curr, next, delimiter, toLower)
 		prev = curr
 		curr = next
 	}
 
 	if len(s) > 0 {
-		processChar(&buffer, prev, curr, 0, delimiter, adjustCase)
+		processChar(&buffer, prev, curr, 0, delimiter, toLower)
 	}
 
 	return string(buffer)
@@ -53,13 +48,6 @@ func delimiterCase(s string, delimiter rune, upperCase bool) string {
 func toLower(ch rune) rune {
 	if ch >= 'A' && ch <= 'Z' {
 		return ch + 32
-	}
-	return ch
-}
-
-func toUpper(ch rune) rune {
-	if ch >= 'a' && ch <= 'z' {
-		return ch - 32
 	}
 	return ch
 }
