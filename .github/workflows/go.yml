@@ -34,18 +34,4 @@ jobs:
       uses: SonarSource/sonarcloud-github-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      with:
-          args: >
-            -Dsonar.organization=maschineio
-            -Dsonar.projectKey=maschineio_core
-            -Dsonar.projectName=core
-            -Dsonar.projectVersion=v0.0.5
-            -Dsonar.sources=.
-            -Dsonar.exclusions=**/mocks/**,**/examples/**,**/parser/ksql_base_listener.go,**/parser/ksql_lexer.go,**/parser/ksql_listener.go,**/parser/ksql_parser.go,**/report.json
-            -Dsonar.tests=.
-            -Dsonar.test.inclusions=**/**_test.go
-            -Dsonar.go.coverage.reportPaths=test.out
-            -Dsonar.go.tests.reportPaths=report.json
-            -Dsonar.externalIssuesReportPaths=secreport.json
-            -Dsonar.verbose=false
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}      
