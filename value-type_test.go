@@ -55,3 +55,57 @@ func TestGetValueTypeInt(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, "Float", v.Type().String()) // we are dealing with JSON float all the time
 }
+
+func TestGetValueTypeInt8(t *testing.T) {
+	v, err := core.GetTypedValue(int8(42))
+	assert.Nil(t, err)
+	assert.Equal(t, "Float", v.Type().String()) // we are dealing with JSON float all the time
+}
+
+func TestGetValueTypeInt16(t *testing.T) {
+	v, err := core.GetTypedValue(int16(42))
+	assert.Nil(t, err)
+	assert.Equal(t, "Float", v.Type().String()) // we are dealing with JSON float all the time
+}
+
+func TestGetValueTypeInt32(t *testing.T) {
+	v, err := core.GetTypedValue(int32(42))
+	assert.Nil(t, err)
+	assert.Equal(t, "Float", v.Type().String()) // we are dealing with JSON float all the time
+}
+
+func TestGetValueTypeInt64(t *testing.T) {
+	v, err := core.GetTypedValue(int64(42))
+	assert.Nil(t, err)
+	assert.Equal(t, "Float", v.Type().String()) // we are dealing with JSON float all the time
+}
+
+func TestGetValueTypeFloat32(t *testing.T) {
+	v, err := core.GetTypedValue(float32(42))
+	assert.Nil(t, err)
+	assert.Equal(t, "Float", v.Type().String()) // we are dealing with JSON float all the time
+}
+
+func TestGetValueTypeFloat64(t *testing.T) {
+	v, err := core.GetTypedValue(float64(42))
+	assert.Nil(t, err)
+	assert.Equal(t, "Float", v.Type().String()) // we are dealing with JSON float all the time
+}
+
+func TestGetValueTypeNil(t *testing.T) {
+	v, err := core.GetTypedValue(nil)
+	assert.Nil(t, err)
+	assert.Equal(t, "Nil", v.Type().String()) // we are dealing with JSON float all the time
+}
+
+func TestGetValueTypeString(t *testing.T) {
+	v, err := core.GetTypedValue("Zaphod Beeblebrox")
+	assert.Nil(t, err)
+	assert.Equal(t, "String", v.Type().String()) // we are dealing with JSON float all the time
+}
+
+func TestGetValueTypeSValue(t *testing.T) {
+	v, err := core.GetTypedValue(core.NewBoolValue(true))
+	assert.Nil(t, err)
+	assert.Equal(t, "Bool", v.Type().String()) // we are dealing with JSON float all the time
+}
