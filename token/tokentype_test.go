@@ -131,3 +131,11 @@ func TestTokenTypeIsComparator(t *testing.T) {
 		})
 	}
 }
+
+func TestTokenTypeError(t *testing.T) {
+	testCases := []token.TokenType{
+		-1, // less than 0
+	}
+	result := testCases[0].String()
+	assert.Equal(t, "TokenType(-1)", result)
+}
