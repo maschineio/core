@@ -184,3 +184,8 @@ func TestSliceValueString(t *testing.T) {
 	value := core.NewSliceValue([]any{42})
 	assert.Equal(t, "[42]", value.String())
 }
+
+func TestBoolValue(t *testing.T) {
+	value := core.NewBoolValue(true)
+	assert.True(t, value.BoolValue())
+}
