@@ -68,12 +68,12 @@ func TestContextSetInputNotBytes(t *testing.T) {
 	assert.Equal(t, []uint8([]byte{0x7b, 0x7d}), result)
 }
 
-//func TestContextGetValue(t *testing.T) {
-//	ctx := context.Context{}
-//	ctx.Set("key", 42)
-//	result := ctx.Value("key")
-//	result2 := ctx.Value("not-exists")
-//
-//	assert.Equal(t, 42, result)
-//	assert.Nil(t, result2)
-//}
+func TestContextGetValue(t *testing.T) {
+	ctx := context.Context{}
+	ctx.Set("key", 42)
+	result := ctx.Value("key")
+	result2 := ctx.Value("not-exists")
+
+	assert.Equal(t, 42, result)
+	assert.Nil(t, result2)
+}
