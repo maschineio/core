@@ -130,5 +130,7 @@ func TestGetValueTypeError(t *testing.T) {
 
 func TestValueType(t *testing.T) {
 	value := core.NewBoolValue(true)
+	valid := value.IsValid()
 	assert.Equal(t, core.Type(3), value.Type())
+	assert.True(t, valid)
 }
