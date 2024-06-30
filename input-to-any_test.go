@@ -34,3 +34,9 @@ func TestCoreInputToBytesWithValue(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, []byte{0x74, 0x72, 0x75, 0x65}, result)
 }
+
+func TestCoreInputToBytesWithMarshalError(t *testing.T) {
+	_, err := core.InputToBytes(map[string]any{"key": make(chan int)})
+	assert.NotNil(t, err)
+	assert.EqualError(t, err, "json: unsupported type: chan int")
+}
