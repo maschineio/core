@@ -44,3 +44,10 @@ func TestContextGetCredentialsExistsFalse(t *testing.T) {
 
 	assert.False(t, result)
 }
+
+func TestContextGetEmptyInput(t *testing.T) {
+	ctx := context.Context{}
+	result := ctx.GetInput()
+
+	assert.Equal(t, []byte("{}"), result)
+}
