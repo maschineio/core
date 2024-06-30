@@ -59,3 +59,11 @@ func TestContextSetInput(t *testing.T) {
 
 	assert.Equal(t, []byte("test"), result)
 }
+
+func TestContextSetInputNotBytes(t *testing.T) {
+	ctx := context.Context{}
+	ctx.Set(context.INPUTKEY, 42)
+	result := ctx.GetInput()
+
+	assert.Equal(t, []uint8([]byte{0x7b, 0x7d}), result)
+}
