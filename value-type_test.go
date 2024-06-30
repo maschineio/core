@@ -117,7 +117,18 @@ func TestGetValueTypeValue(t *testing.T) {
 }
 
 func TestGetValueTypeUnknown(t *testing.T) {
+	v, err := core.GetTypedValue(*core.NewUnknownValue())
+	assert.Nil(t, err)
+	assert.Equal(t, "Unknown", v.Type().String())
+}
+
+func TestGetValueTypeError(t *testing.T) {
 	_, err := core.GetTypedValue(make(chan int))
 	assert.NotNil(t, err)
-	assert.EqualError(t, err, "GetTypedValue: unknown type chan int") // we are dealing with JSON float all the tim
+	assert.EqualError(t, err, "GetTypedValue: unknown type chan int")
+}
+
+func TestValueType(t *testing.T) {
+	value := core.NewBoolValue(true)
+	assert.Equal(t, core.Type(3), value.Type())
 }
