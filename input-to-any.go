@@ -16,6 +16,12 @@ func InputToBytes(input any) (result []byte, err error) {
 		} else {
 			return result, nil
 		}
+	case []any:
+		if result, err := json.Marshal(t); err != nil {
+			return nil, err
+		} else {
+			return result, nil
+		}
 	case Value:
 		return t.AsJSONBytes()
 	default:
