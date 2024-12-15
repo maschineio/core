@@ -65,6 +65,13 @@ func (c *Context) CredentialsExists() bool {
 	return credExists
 }
 
+// Background returns a new context with a background value
+func Background() *Context {
+	return &Context{
+		Keys: map[string]any{},
+	}
+}
+
 // GetInputAsInterface returns the input as interface{}
 func (c *Context) GetInputAsInterface() (any, error) {
 	value := c.GetInput()

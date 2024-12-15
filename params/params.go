@@ -167,7 +167,7 @@ func GetParam[T any](params *Parameter, name string) (T, error) {
 	var result T
 
 	if params == nil {
-		return result, fmt.Errorf("no params exists for name: " + name)
+		return result, fmt.Errorf("no params exists for name: %s", name)
 	}
 
 	iface := params.Get(name)
