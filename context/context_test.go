@@ -8,6 +8,13 @@ import (
 	"maschine.io/core/context"
 )
 
+func TestBackground(t *testing.T) {
+	ctx := context.Background()
+
+	assert.NotNil(t, ctx)
+	assert.Empty(t, ctx.Keys)
+}
+
 func TestContextSetGet(t *testing.T) {
 	ctx := context.Context{}
 	ctx.Set("test", 42)
