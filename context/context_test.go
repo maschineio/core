@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
 	"maschine.io/core/context"
+	"maschine.io/core/params"
 )
 
 func TestBackground(t *testing.T) {
@@ -309,4 +310,51 @@ func TestContextWithValue(t *testing.T) {
 
 	assert.NotNil(t, ctx)
 	assert.Equal(t, "value", ctx.Value("key"))
+}
+func TestContextDeadlineNotSet(t *testing.T) {
+	ctx := context.Background()
+	deadline, ok := ctx.Deadline()
+
+	assert.Equal(t, time.Time{}, deadline)
+	assert.False(t, ok)
+}
+
+func TestContextDeadlineSet(t *testing.T) {
+	parent := context.Background()
+	deadline := time.Now().Add(1 * time.Second)
+	ctx, _ := context.WithDeadline(parent, deadline)
+
+	d, ok := ctx.Deadline()
+	assert.True(t, ok)
+	assert.Equal(t, deadline, d)
+}
+
+func TestContextDone(t *testing.T) {
+	ctx := context.Background()
+	done := ctx.Done()
+	assert.NotNil(t, done)
+}
+
+func TestContextErr(t *testing.T) {
+	ctx := context.Background()
+	assert.Nil(t, ctx.Err())
+
+	ctx2, cancel := context.WithCancel(ctx)
+	cancel()
+	assert.Equal(t, stdcontext.Canceled, ctx2.Err())
+}
+
+func TestContextSetGetParams(t *testing.T) {
+	ctx := context.Background()
+	param := &params.Parameter{}
+
+	// Test initial nil case
+	assert.Nil(t, ctx.GetParams())
+
+	// Test setting and getting params
+	ctx.SetParams(param)
+	result := ctx.GetParams()
+
+	assert.NotNil(t, result)
+	assert.Equal(t, param, result)
 }
