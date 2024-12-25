@@ -64,3 +64,38 @@ func TestReadJSONFile_FileNotFound(t *testing.T) {
 	_, err := core.ReadJSONFile("nonexistent.json")
 	assert.Error(t, err)
 }
+
+func TestValidateFilePath(t *testing.T) {
+	tests := []struct {
+		name    string
+		path    string
+		wantErr bool
+	}{
+		{
+			name:    "valid path",
+			path:    "test.json",
+			wantErr: false,
+		},
+		{
+			name:    "directory traversal",
+			path:    "../test.json",
+			wantErr: true,
+		},
+		{
+			name:    "absolute path",
+			path:    "/etc/passwd",
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := core.ValidateFilePath(tt.path)
+			if tt.wantErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
+}
