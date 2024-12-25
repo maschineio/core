@@ -4,7 +4,10 @@ import (
 	"testing"
 	"time"
 
+	stdcontext "context"
+
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/zap"
 	"maschine.io/core/context"
 )
 
@@ -189,4 +192,121 @@ func TestContextGetStringMapStringSlice(t *testing.T) {
 	result := ctx.GetStringMapStringSlice("key")
 
 	assert.Equal(t, m, result)
+}
+func TestContextGetBytes(t *testing.T) {
+	ctx := context.Context{}
+	data := []byte("test")
+	ctx.Set("key", data)
+	result := ctx.GetBytes("key")
+
+	assert.Equal(t, data, result)
+}
+
+func TestContextGetInt64(t *testing.T) {
+	ctx := context.Context{}
+	ctx.Set("key", int64(42))
+	result := ctx.GetInt64("key")
+
+	assert.Equal(t, int64(42), result)
+}
+
+func TestContextGetUint(t *testing.T) {
+	ctx := context.Context{}
+	ctx.Set("key", uint(42))
+	result := ctx.GetUint("key")
+
+	assert.Equal(t, uint(42), result)
+}
+
+func TestContextGetUint64(t *testing.T) {
+	ctx := context.Context{}
+	ctx.Set("key", uint64(42))
+	result := ctx.GetUint64("key")
+
+	assert.Equal(t, uint64(42), result)
+}
+
+func TestContextGetInputAsInterface(t *testing.T) {
+	ctx := context.Context{}
+	ctx.SetInput([]byte(`{"key":"value"}`))
+	result, err := ctx.GetInputAsInterface()
+
+	assert.NoError(t, err)
+	assert.Equal(t, []byte(`{"key":"value"}`), result)
+}
+
+func TestContextGetInputAsMap(t *testing.T) {
+	ctx := context.Context{}
+	ctx.SetInput([]byte(`{"key":"value"}`))
+	result, err := ctx.GetInputAsMap()
+
+	assert.NoError(t, err)
+	assert.Equal(t, map[string]any{"key": "value"}, result)
+}
+
+func TestContextSetLogger(t *testing.T) {
+	ctx := context.Context{}
+	logger, _ := zap.NewProduction()
+	ctx.SetLogger(logger)
+	result := ctx.DefaultLogger()
+
+	assert.Equal(t, logger, result)
+}
+
+func TestContextGetLogger(t *testing.T) {
+	ctx := context.Context{}
+	logger, _ := zap.NewProduction()
+	ctx.SetLogger(logger)
+	result := ctx.GetLogger(context.LOGGERKEY)
+
+	assert.Equal(t, logger, result)
+}
+
+func TestContextWithCancel(t *testing.T) {
+	parent := context.Background()
+	ctx, cancel := context.WithCancel(parent)
+
+	assert.NotNil(t, ctx)
+	assert.NotNil(t, cancel)
+
+	cancel() // Abbruch auslösen
+
+	select {
+	case <-ctx.Done():
+		assert.Equal(t, stdcontext.Canceled, ctx.Err())
+	case <-time.After(1 * time.Second):
+		t.Fatal("context was not canceled")
+	}
+}
+
+func TestContextWithDeadline(t *testing.T) {
+	parent := context.Background()
+	deadline := time.Now().Add(1 * time.Second)
+	ctx, cancel := context.WithDeadline(parent, deadline)
+
+	assert.NotNil(t, ctx)
+	assert.NotNil(t, cancel)
+
+	time.Sleep(2 * time.Second)
+	assert.Equal(t, stdcontext.DeadlineExceeded, ctx.Err())
+}
+
+func TestContextWithTimeout(t *testing.T) {
+	parent := context.Background()
+	timeout := 1 * time.Second
+	ctx, cancel := context.WithTimeout(parent, timeout)
+
+	assert.NotNil(t, ctx)
+	assert.NotNil(t, cancel)
+
+	time.Sleep(2 * time.Second)
+	assert.Equal(t, stdcontext.DeadlineExceeded, ctx.Err())
+}
+
+func TestContextWithValue(t *testing.T) {
+	parent := context.Background()
+	ctx := context.WithValue(parent, "key", "value")
+
+	assert.NotNil(t, ctx)
+	assert.Equal(t, "value", ctx.Value("key"))
 }

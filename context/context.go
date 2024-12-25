@@ -1,6 +1,7 @@
 package context
 
 import (
+	"context"
 	"encoding/json"
 	"sync"
 	"time"
@@ -23,6 +24,10 @@ type Context struct {
 
 	// Keys is a key/value pair exclusively for the context.
 	Keys map[string]any
+
+	done     chan struct{}
+	err      error
+	deadline time.Time
 }
 
 // Set is used to store a new key/value pair exclusively for this context.
@@ -69,7 +74,35 @@ func (c *Context) CredentialsExists() bool {
 func Background() *Context {
 	return &Context{
 		Keys: map[string]any{},
+		done: make(chan struct{}),
 	}
+}
+
+// Deadline returns the time when work done on behalf of this context
+// should be canceled. Deadline returns ok==false when no deadline is set.
+func (c *Context) Deadline() (deadline time.Time, ok bool) {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	if c.deadline.IsZero() {
+		return time.Time{}, false
+	}
+	return c.deadline, true
+}
+
+// Done returns a channel that's closed when work done on behalf of this
+// context should be canceled. Done may return nil if this context can
+// never be canceled.
+func (c *Context) Done() <-chan struct{} {
+	return c.done
+}
+
+// Err returns a non-nil error value after Done is closed. Err returns
+// Canceled if the context was canceled or DeadlineExceeded if the
+// context's deadline passed. No other values for Err are defined.
+func (c *Context) Err() error {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.err
 }
 
 // GetInputAsInterface returns the input as interface{}
@@ -271,33 +304,99 @@ func (c *Context) GetLogger(lg string) (logger *zap.Logger) {
 	return
 }
 
-/************************************/
-/***** GOLANG.ORG/X/NET/CONTEXT *****/
-/************************************/
-
-// Deadline returns that there is no deadline (ok==false)
-func (c *Context) Deadline() (deadline time.Time, ok bool) {
-	return
-}
-
-// Done returns nil (chan which will wait forever) when c.Request has no Context.
-func (c *Context) Done() <-chan struct{} {
-	return nil
-}
-
-// Err returns nil when c.Request has no Context.
-func (c *Context) Err() error {
-	return nil
-}
-
 // Value returns the value associated with this context for key, or nil
 // if no value is associated with key. Successive calls to Value with
 // the same key returns the same result.
 func (c *Context) Value(key any) any {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
 	if keyAsString, ok := key.(string); ok {
 		if val, exists := c.Get(keyAsString); exists {
 			return val
 		}
 	}
 	return nil
+}
+
+// WithCancel returns a copy of parent with a new Done channel. The returned
+// context's Done channel is closed when the returned cancel function is called
+// or when the parent context's Done channel is closed, whichever happens first.
+func WithCancel(parent *Context) (*Context, func()) {
+	ctx := &Context{
+		Keys: parent.Keys,
+		done: make(chan struct{}),
+	}
+
+	cancel := func() {
+		ctx.mu.Lock()
+		defer ctx.mu.Unlock()
+		if ctx.err == nil {
+			ctx.err = context.Canceled
+			close(ctx.done)
+		}
+	}
+
+	go func() {
+		select {
+		case <-parent.Done():
+			cancel()
+		case <-ctx.Done():
+		}
+	}()
+
+	return ctx, cancel
+}
+
+// WithDeadline returns a copy of the parent context with the deadline adjusted
+// to be no later than d. If the parent's deadline is already earlier than d,
+// WithDeadline(parent, d) is semantically equivalent to parent. The returned
+// context's Done channel is closed when the deadline expires, when the returned
+// cancel function is called, or when the parent context's Done channel is closed,
+// whichever happens first.
+func WithDeadline(parent *Context, d time.Time) (*Context, func()) {
+	ctx := &Context{
+		Keys:     parent.Keys,
+		done:     make(chan struct{}),
+		deadline: d,
+	}
+
+	cancel := func() {
+		ctx.mu.Lock()
+		defer ctx.mu.Unlock()
+		if ctx.err == nil {
+			ctx.err = context.DeadlineExceeded
+			close(ctx.done)
+		}
+	}
+
+	go func() {
+		select {
+		case <-parent.Done():
+			cancel()
+		case <-time.After(time.Until(d)):
+			cancel()
+		case <-ctx.Done():
+		}
+	}()
+
+	return ctx, cancel
+}
+
+// WithTimeout returns WithDeadline(parent, time.Now().Add(timeout)).
+func WithTimeout(parent *Context, timeout time.Duration) (*Context, func()) {
+	return WithDeadline(parent, time.Now().Add(timeout))
+}
+
+// WithValue returns a copy of parent in which the value associated with key is val.
+func WithValue(parent *Context, key, val any) *Context {
+	ctx := &Context{
+		Keys:     parent.Keys,
+		done:     parent.done,
+		err:      parent.err,
+		deadline: parent.deadline,
+	}
+	if keyAsString, ok := key.(string); ok {
+		ctx.Set(keyAsString, val)
+	}
+	return ctx
 }
