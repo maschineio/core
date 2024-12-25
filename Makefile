@@ -6,6 +6,14 @@ VERSION=`git describe --tags`
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
+.PHONY: install
+install: ## install all dependencies
+	@go install sigs.k8s.io/bom/cmd/bom@latest
+
+.PHONY: bom
+bom: ## generate bom
+	@bom generate .
+
 .PHONY: generate
 generate: ## runs `go generate` to build the dynamically generated source files
 	@make stringer
@@ -43,4 +51,4 @@ coverage: ## generate code coverage for this project
 # disallow any parallelism (-j) for Make. This is necessary since some
 # commands during the build process create temporary files that collide
 # under parallel conditions.
-.NOTPARALLEL:	
+.NOTPARALLEL:
