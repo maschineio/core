@@ -268,3 +268,149 @@ func TestValueAsYAMLPrettyfiedBytes(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, []uint8([]byte{0x7b, 0xa, 0x20, 0x20, 0x22, 0x6b, 0x65, 0x79, 0x22, 0x3a, 0x20, 0x22, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x22, 0x2c, 0xa, 0x20, 0x20, 0x22, 0x6e, 0x65, 0x73, 0x74, 0x65, 0x64, 0x22, 0x3a, 0x20, 0x7b, 0xa, 0x20, 0x20, 0x20, 0x20, 0x22, 0x65, 0x61, 0x72, 0x74, 0x68, 0x22, 0x3a, 0x20, 0x22, 0x6d, 0x6f, 0x6f, 0x6e, 0x22, 0xa, 0x20, 0x20, 0x7d, 0xa, 0x7d}), result)
 }
+func TestNewBoolValue(t *testing.T) {
+	v := core.NewBoolValue(true)
+	assert.Equal(t, "Bool", v.Type().String())
+	assert.Equal(t, "true", v.String())
+}
+
+func TestNewStringMapValue(t *testing.T) {
+	v := core.NewStringMapValue(map[string]any{"key": "value"})
+	assert.Equal(t, "StringMap", v.Type().String())
+	assert.Equal(t, "map[key:value]", v.String())
+}
+
+func TestNewPointerStringMapValue(t *testing.T) {
+	m := map[string]any{"key": "value"}
+	v := core.NewPointerStringMapValue(&m)
+	assert.Equal(t, "PointerStringMap", v.Type().String())
+	assert.Equal(t, "map[key:value]", v.String())
+}
+
+func TestNewBytesValue(t *testing.T) {
+	v := core.NewBytesValue([]byte("hello"))
+	assert.Equal(t, "Bytes", v.Type().String())
+	assert.Equal(t, "hello", v.String())
+}
+
+func TestNewFloat64Value(t *testing.T) {
+	v := core.NewFloat64Value(42.0)
+	assert.Equal(t, "Float", v.Type().String())
+	assert.Equal(t, "42", v.String())
+}
+
+func TestNewFloat32Value(t *testing.T) {
+	v := core.NewFloat32Value(42.0)
+	assert.Equal(t, "Float", v.Type().String())
+	assert.Equal(t, "42", v.String())
+}
+
+func TestNewIntValue(t *testing.T) {
+	v := core.NewIntValue(42)
+	assert.Equal(t, "Float", v.Type().String())
+	assert.Equal(t, "42", v.String())
+}
+
+func TestNewInt8Value(t *testing.T) {
+	v := core.NewInt8Value(42)
+	assert.Equal(t, "Float", v.Type().String())
+	assert.Equal(t, "42", v.String())
+}
+
+func TestNewInt16Value(t *testing.T) {
+	v := core.NewInt16Value(42)
+	assert.Equal(t, "Float", v.Type().String())
+	assert.Equal(t, "42", v.String())
+}
+
+func TestNewInt32Value(t *testing.T) {
+	v := core.NewInt32Value(42)
+	assert.Equal(t, "Float", v.Type().String())
+	assert.Equal(t, "42", v.String())
+}
+
+func TestNewInt64Value(t *testing.T) {
+	v := core.NewInt64Value(42)
+	assert.Equal(t, "Float", v.Type().String())
+	assert.Equal(t, "42", v.String())
+}
+
+func TestNewNilValue(t *testing.T) {
+	v := core.NewNilValue()
+	assert.Equal(t, "Nil", v.Type().String())
+	assert.Equal(t, "<nil>", v.String())
+}
+
+func TestNewSliceValue(t *testing.T) {
+	v := core.NewSliceValue([]any{1, 2, 3})
+	assert.Equal(t, "Slice", v.Type().String())
+	assert.Equal(t, "[1 2 3]", v.String())
+}
+
+func TestNewUnknownValue(t *testing.T) {
+	v := core.NewUnknownValue()
+	assert.Equal(t, "Unknown", v.Type().String())
+	assert.Equal(t, "unknown", v.String())
+}
+
+func TestNewStringValue(t *testing.T) {
+	v := core.NewStringValue("hello")
+	assert.Equal(t, "String", v.Type().String())
+	assert.Equal(t, "hello", v.String())
+}
+
+func TestMarshalJSON(t *testing.T) {
+	v := core.NewStringValue("hello")
+	result, err := v.MarshalJSON()
+	assert.Nil(t, err)
+	assert.Equal(t, []byte("hello"), result)
+}
+
+func TestAsAny(t *testing.T) {
+	v := core.NewStringValue("hello")
+	result, err := v.AsAny()
+	assert.Nil(t, err)
+	assert.Equal(t, "hello", result)
+}
+
+func TestAsJSONString(t *testing.T) {
+	v := core.NewStringValue("hello")
+	result, err := v.AsJSONString()
+	assert.Nil(t, err)
+	assert.Equal(t, "hello", result)
+}
+
+func TestAsJSONBytes(t *testing.T) {
+	v := core.NewStringValue("hello")
+	result, err := v.AsJSONBytes()
+	assert.Nil(t, err)
+	assert.Equal(t, []byte("hello"), result)
+}
+
+func TestAsJSONPrettyfiedBytes(t *testing.T) {
+	v := core.NewStringMapValue(map[string]any{"key": "value"})
+	result, err := v.AsJSONPrettyfiedBytes()
+	assert.Nil(t, err)
+	assert.Equal(t, []byte("{\n  \"key\": \"value\"\n}"), result)
+}
+
+func TestAsYAMLBytes(t *testing.T) {
+	v := core.NewStringMapValue(map[string]any{"key": "value"})
+	result, err := v.AsYAMLBytes()
+	assert.Nil(t, err)
+	assert.Equal(t, []byte("key: value\n"), result)
+}
+
+func TestAsYAMLString(t *testing.T) {
+	v := core.NewStringMapValue(map[string]any{"key": "value"})
+	result, err := v.AsYAMLString()
+	assert.Nil(t, err)
+	assert.Equal(t, "key: value\n", result)
+}
+
+func TestIsValid(t *testing.T) {
+	v := core.NewStringValue("hello")
+	assert.True(t, v.IsValid())
+	v = core.NewUnknownValue()
+	assert.False(t, v.IsValid())
+}

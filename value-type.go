@@ -86,34 +86,43 @@ func (v *Value) MarshalJSON() (r []byte, err error) {
 }
 
 func (v *Value) AsAny() (result any, err error) {
-	var b []byte
-	b, err = v.MarshalJSON()
-	if err != nil {
-		return
+	switch v.Type() {
+	case Nil:
+		return nil, nil
+	case String:
+		return v.stringValue, nil
+	case Bool:
+		return v.boolValue, nil
+	case Float:
+		return v.floatValue, nil
+	case Bytes:
+		return v.bytesValue, nil
+	case StringMap:
+		return v.stringMapValue, nil
+	case PointerStringMap:
+		if v.ptStringMapValue != nil {
+			return *v.ptStringMapValue, nil
+		}
+		return nil, nil
+	case Slice:
+		return v.sliceValue, nil
+	case Unknown:
+		return nil, nil
+	default:
+		return nil, fmt.Errorf("core.Value: unknown type: %v", v.Type())
 	}
-	err = json.Unmarshal(b, &result)
-	if err != nil {
-		return
-	}
-	return
 }
 
 func (v *Value) AsJSONString() (s string, err error) {
-	var b []byte
-	b, err = v.AsJSONBytes()
+	b, err := v.MarshalJSON()
 	if err != nil {
-		return
+		return "", err
 	}
 	return string(b), nil
 }
 
 func (v *Value) AsJSONBytes() (s []byte, err error) {
-	var b []byte
-	b, err = v.MarshalJSON()
-	if err != nil {
-		return
-	}
-	return b, nil
+	return v.MarshalJSON()
 }
 
 func (v *Value) AsJSONPrettyfiedBytes() (s []byte, err error) {
