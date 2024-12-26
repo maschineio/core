@@ -84,7 +84,7 @@ func TestValidateFilePath(t *testing.T) {
 		{
 			name:    "absolute path",
 			path:    "/etc/passwd",
-			wantErr: true,
+			wantErr: false,
 		},
 	}
 

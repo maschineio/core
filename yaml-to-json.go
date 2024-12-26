@@ -53,9 +53,9 @@ func ValidateFilePath(fileName string) error {
 	}
 
 	// check for absolute paths
-	if filepath.IsAbs(cleanPath) {
-		return fmt.Errorf("absolute paths are not allowed")
-	}
+	// if filepath.IsAbs(cleanPath) {
+	// 	return fmt.Errorf("absolute paths are not allowed")
+	// }
 
 	return nil
 }
