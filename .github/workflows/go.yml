@@ -30,6 +30,12 @@ jobs:
         with:
           args: -no-fail -fmt=sonarqube -out secreport.json ./...
 
+      - name: Scan
+        uses: SonarSource/sonarqube-scan-action@v5.2.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
       - name: Run golangci-lint with reviewdog
         uses: reviewdog/action-golangci-lint@v2
         with:
@@ -37,9 +43,3 @@ jobs:
           golangci_lint_flags: "-v"
           level: error
           reporter: github-pr-review
-
-      - name: Scan
-        uses: SonarSource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
