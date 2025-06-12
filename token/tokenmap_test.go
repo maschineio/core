@@ -198,3 +198,36 @@ func TestTokenMapStartAt(t *testing.T) {
 		assert.Equal(t, expected, startAt)
 	})
 }
+func TestTokenMapHasComparator(t *testing.T) {
+	t.Run("empty map", func(t *testing.T) {
+		tokMap := token.Map{}
+		assert.False(t, tokMap.HasComparator())
+	})
+
+	t.Run("no comparator tokens", func(t *testing.T) {
+		tokMap := token.Map{}
+		err := tokMap.Append(token.NewStringToken(token.Next, "next"))
+		assert.Nil(t, err)
+		err = tokMap.Append(token.NewStringToken(token.Version, "1.0"))
+		assert.Nil(t, err)
+		assert.False(t, tokMap.HasComparator())
+	})
+
+	t.Run("one comparator token", func(t *testing.T) {
+		tokMap := token.Map{}
+		err := tokMap.Append(token.NewBoolToken(token.IsArray, true))
+		assert.Nil(t, err)
+		err = tokMap.Append(token.NewStringToken(token.Next, "next"))
+		assert.Nil(t, err)
+		assert.True(t, tokMap.HasComparator())
+	})
+
+	t.Run("multiple comparator tokens", func(t *testing.T) {
+		tokMap := token.Map{}
+		err := tokMap.Append(token.NewBoolToken(token.IsArray, true))
+		assert.Nil(t, err)
+		err = tokMap.Append(token.NewBoolToken(token.IsNull, false))
+		assert.Nil(t, err)
+		assert.True(t, tokMap.HasComparator())
+	})
+}
