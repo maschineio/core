@@ -70,7 +70,10 @@ func (i iFunction) Name() string {
 }
 
 func (i iFunction) IsFunc() bool {
-	return reflect.TypeOf(i.function).Kind() == reflect.Func
+	if i.function == nil {
+		return false
+	}
+	return reflect.TypeOf(*i.function).Kind() == reflect.Func
 }
 
 func (i iFunction) String() string {
