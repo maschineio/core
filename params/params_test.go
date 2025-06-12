@@ -346,3 +346,89 @@ func TestProcessParameters(t *testing.T) {
 		assert.NotNil(t, result)
 	})
 }
+func TestGetStringSliceParamDefault(t *testing.T) {
+	defaultValues := []string{"default1", "default2"}
+
+	tests := []struct {
+		name         string
+		params       map[string]any
+		key          string
+		defaultVals  []string
+		expected     []string
+		expectError  bool
+		errorMessage string
+	}{
+		{
+			name:        "nil parameter",
+			params:      nil,
+			key:         "test",
+			defaultVals: defaultValues,
+			expected:    defaultValues,
+		},
+		{
+			name:        "key not found",
+			params:      map[string]any{"otherkey": []string{"val1"}},
+			key:         "test",
+			defaultVals: defaultValues,
+			expected:    defaultValues,
+		},
+		{
+			name:        "valid []string parameter",
+			params:      map[string]any{"test": []string{"val1", "val2"}},
+			key:         "test",
+			defaultVals: defaultValues,
+			expected:    []string{"val1", "val2"},
+		},
+		{
+			name:        "valid []any parameter with strings",
+			params:      map[string]any{"test": []any{"val1", "val2"}},
+			key:         "test",
+			defaultVals: defaultValues,
+			expected:    []string{"val1", "val2"},
+		},
+		{
+			name:        "empty slice parameter",
+			params:      map[string]any{"test": []string{}},
+			key:         "test",
+			defaultVals: defaultValues,
+			expected:    []string{},
+		},
+		{
+			name:         "wrong parameter type",
+			params:       map[string]any{"test": 123},
+			key:          "test",
+			defaultVals:  defaultValues,
+			expectError:  true,
+			errorMessage: "'test' parameter must be a '[]string': detected int",
+		},
+		{
+			name:        "[]any with mixed types - extracts only strings",
+			params:      map[string]any{"test": []any{"str1", 123, "str2", true}},
+			key:         "test",
+			defaultVals: defaultValues,
+			expected:    []string{"str1", "str2"},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var param *params.Parameter
+			if tt.params != nil {
+				param = params.NewParameter(&tt.params)
+			}
+
+			result, err := params.GetStringSliceParamDefault(param, tt.key, tt.defaultVals)
+
+			if tt.expectError {
+				assert.Error(t, err)
+				if tt.errorMessage != "" {
+					assert.Equal(t, tt.errorMessage, err.Error())
+				}
+				return
+			}
+
+			assert.NoError(t, err)
+			assert.Equal(t, tt.expected, result)
+		})
+	}
+}
