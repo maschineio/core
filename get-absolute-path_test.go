@@ -154,3 +154,25 @@ func TestGetAbsFilePath(t *testing.T) {
 		})
 	}
 }
+func TestGetAbsDirectoryError(t *testing.T) {
+	// Erstelle ein temporäres Verzeichnis
+	tmpDir := t.TempDir()
+
+	// Erstelle ein Verzeichnis mit ungültigen Berechtigungen
+	invalidDir := filepath.Join(tmpDir, "invalid")
+	err := os.Mkdir(invalidDir, 0755)
+	require.NoError(t, err)
+
+	err = os.Chmod(invalidDir, 0000)
+	require.NoError(t, err)
+
+	defer func() {
+		// Stelle Berechtigungen wieder her für Cleanup
+		_ = os.Chmod(invalidDir, 0755)
+	}()
+
+	// Versuche GetAbsDirectory mit einem Unterverzeichnis des gesperrten Verzeichnisses
+	result, err := core.GetAbsDirectory(filepath.Join(invalidDir, "subdir"))
+	assert.Error(t, err)
+	assert.Empty(t, result)
+}
