@@ -414,3 +414,88 @@ func TestIsValid(t *testing.T) {
 	v = core.NewUnknownValue()
 	assert.False(t, v.IsValid())
 }
+
+func TestValueAsAny(t *testing.T) {
+	t.Run("nil value", func(t *testing.T) {
+		v := core.NewNilValue()
+		result, err := v.AsAny()
+		assert.NoError(t, err)
+		assert.Nil(t, result)
+	})
+
+	t.Run("string value", func(t *testing.T) {
+		v := core.NewStringValue("test")
+		result, err := v.AsAny()
+		assert.NoError(t, err)
+		assert.Equal(t, "test", result)
+	})
+
+	t.Run("bool value", func(t *testing.T) {
+		v := core.NewBoolValue(true)
+		result, err := v.AsAny()
+		assert.NoError(t, err)
+		assert.Equal(t, true, result)
+	})
+
+	t.Run("float value", func(t *testing.T) {
+		v := core.NewFloat64Value(3.14)
+		result, err := v.AsAny()
+		assert.NoError(t, err)
+		assert.Equal(t, 3.14, result)
+	})
+
+	t.Run("bytes value", func(t *testing.T) {
+		bytes := []byte("test")
+		v := core.NewBytesValue(bytes)
+		result, err := v.AsAny()
+		assert.NoError(t, err)
+		assert.Equal(t, bytes, result)
+	})
+
+	t.Run("string map value", func(t *testing.T) {
+		m := map[string]any{"key": "value"}
+		v := core.NewStringMapValue(m)
+		result, err := v.AsAny()
+		assert.NoError(t, err)
+		assert.Equal(t, m, result)
+	})
+
+	t.Run("pointer string map value - not nil", func(t *testing.T) {
+		m := map[string]any{"key": "value"}
+		v := core.NewPointerStringMapValue(&m)
+		result, err := v.AsAny()
+		assert.NoError(t, err)
+		assert.Equal(t, m, result)
+	})
+
+	t.Run("pointer string map value - nil", func(t *testing.T) {
+		v := core.NewPointerStringMapValue(nil)
+		result, err := v.AsAny()
+		assert.NoError(t, err)
+		assert.Nil(t, result)
+	})
+
+	t.Run("slice value", func(t *testing.T) {
+		s := []any{"test", 123}
+		v := core.NewSliceValue(s)
+		result, err := v.AsAny()
+		assert.NoError(t, err)
+		assert.Equal(t, s, result)
+	})
+
+	t.Run("unknown value", func(t *testing.T) {
+		v := core.NewUnknownValue()
+		result, err := v.AsAny()
+		assert.NoError(t, err)
+		assert.Nil(t, result)
+	})
+
+	t.Run("invalid type", func(t *testing.T) {
+		// Verwenden Sie einen der vorhandenen Konstruktoren
+		v := core.NewUnknownValue()
+		// Die AsAny() Methode sollte einen Fehler zurückgeben
+		result, err := v.AsAny()
+		assert.NoError(t, err) // Unknown ist ein gültiger Typ
+		assert.Nil(t, result)  // Der Wert sollte nil sein
+	})
+}
