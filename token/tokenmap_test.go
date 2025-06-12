@@ -111,3 +111,90 @@ func TestTokenMapTimeoutSeconds(t *testing.T) {
 		assert.Nil(t, timeout)
 	})
 }
+func TestTokenMapComment(t *testing.T) {
+	t.Run("empty map", func(t *testing.T) {
+		tokMap := token.Map{}
+		comment := tokMap.Comment()
+		assert.Nil(t, comment)
+	})
+
+	t.Run("no comment token", func(t *testing.T) {
+		tokMap := token.Map{}
+		err := tokMap.Append(token.NewStringToken(token.StartAt, "start"))
+		assert.Nil(t, err)
+
+		comment := tokMap.Comment()
+		assert.Nil(t, comment)
+	})
+
+	t.Run("has comment token", func(t *testing.T) {
+		expected := "test comment"
+		tokMap := token.Map{}
+		tok := token.NewStringToken(token.Comment, expected)
+		err := tokMap.Append(tok)
+		assert.Nil(t, err)
+
+		comment := tokMap.Comment()
+		assert.NotNil(t, comment)
+		assert.Equal(t, expected, *comment)
+	})
+}
+func TestTokenMapVersion(t *testing.T) {
+	t.Run("empty map", func(t *testing.T) {
+		tokMap := token.Map{}
+		assert.Panics(t, func() {
+			tokMap.Version()
+		})
+	})
+
+	t.Run("no version token", func(t *testing.T) {
+		tokMap := token.Map{}
+		err := tokMap.Append(token.NewStringToken(token.StartAt, "start"))
+		assert.Nil(t, err)
+
+		assert.Panics(t, func() {
+			tokMap.Version()
+		})
+	})
+
+	t.Run("has version token", func(t *testing.T) {
+		expected := "1.0.0"
+		tokMap := token.Map{}
+		tok := token.NewStringToken(token.Version, expected)
+		err := tokMap.Append(tok)
+		assert.Nil(t, err)
+
+		version := tokMap.Version()
+		assert.Equal(t, expected, version)
+	})
+}
+
+func TestTokenMapStartAt(t *testing.T) {
+	t.Run("empty map", func(t *testing.T) {
+		tokMap := token.Map{}
+		assert.Panics(t, func() {
+			tokMap.StartAt()
+		})
+	})
+
+	t.Run("no startat token", func(t *testing.T) {
+		tokMap := token.Map{}
+		err := tokMap.Append(token.NewStringToken(token.Version, "1.0.0"))
+		assert.Nil(t, err)
+
+		assert.Panics(t, func() {
+			tokMap.StartAt()
+		})
+	})
+
+	t.Run("has startat token", func(t *testing.T) {
+		expected := "FirstState"
+		tokMap := token.Map{}
+		tok := token.NewStringToken(token.StartAt, expected)
+		err := tokMap.Append(tok)
+		assert.Nil(t, err)
+
+		startAt := tokMap.StartAt()
+		assert.Equal(t, expected, startAt)
+	})
+}
