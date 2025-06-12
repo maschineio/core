@@ -19,8 +19,8 @@ func TestGetRestyRequest(t *testing.T) {
 
 		expectedHeaders := map[string]string{
 			"User-Agent":   "maschine/1.0",
-			"Content-Type": "application/json",
-			"Accept":       "application/json",
+			"Content-Type": core.MimeTypeJSON,
+			"Accept":       core.MimeTypeJSON,
 		}
 
 		for key, expectedValue := range expectedHeaders {
@@ -43,9 +43,9 @@ func TestGetRestyRequest(t *testing.T) {
 		assert.Equal(t, "maschine/1.0", headers.Get("User-Agent"))
 
 		// Test Content-Type header
-		assert.Equal(t, "application/json", headers.Get("Content-Type"))
+		assert.Equal(t, core.MimeTypeJSON, headers.Get("Content-Type"))
 
 		// Test Accept header
-		assert.Equal(t, "application/json", headers.Get("Accept"))
+		assert.Equal(t, core.MimeTypeJSON, headers.Get("Accept"))
 	})
 }
