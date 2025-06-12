@@ -31,7 +31,7 @@ func TestGetValue(t *testing.T) {
 
 func TestGetValuesWithLogger(t *testing.T) {
 	logger := zaptest.NewLogger(t)
-	input := map[string]interface{}{
+	input := map[string]any{
 		"strVal": "hello",
 		"intVal": 123,
 	}
@@ -77,7 +77,7 @@ func TestGetValuesWithLogger(t *testing.T) {
 
 func TestGetTimestampValueWithLogger(t *testing.T) {
 	logger := zaptest.NewLogger(t)
-	input := map[string]interface{}{
+	input := map[string]any{
 		"validTime":   "2023-01-02T15:04:05Z",
 		"invalidTime": "not-a-time",
 	}
