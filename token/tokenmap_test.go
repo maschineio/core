@@ -82,3 +82,32 @@ func TestTokenMapNewTokenMapValid(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(tm))
 }
+func TestTokenMapTimeoutSeconds(t *testing.T) {
+	t.Run("no timeout token", func(t *testing.T) {
+		tokMap := token.Map{}
+		err := tokMap.Append(token.NewStringToken(token.StartAt, "start"))
+		assert.Nil(t, err)
+
+		timeout := tokMap.TimeoutSeconds()
+		assert.Nil(t, timeout)
+	})
+
+	t.Run("has timeout token", func(t *testing.T) {
+		expected := uint64(30)
+		tokMap := token.Map{}
+		// TimeoutSeconds Token mit NewUint64Token erstellen
+		tok := token.NewUInt64Token(token.TimeoutSeconds, expected)
+		err := tokMap.Append(tok)
+		assert.Nil(t, err)
+
+		timeout := tokMap.TimeoutSeconds()
+		assert.NotNil(t, timeout)
+		assert.Equal(t, expected, *timeout)
+	})
+
+	t.Run("empty map", func(t *testing.T) {
+		tokMap := token.Map{}
+		timeout := tokMap.TimeoutSeconds()
+		assert.Nil(t, timeout)
+	})
+}
