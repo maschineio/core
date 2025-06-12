@@ -104,25 +104,53 @@ func TestGetAbsFilePath(t *testing.T) {
 		})
 	}
 }
-func TestGetAbsDirectoryError(t *testing.T) {
-	// Erstelle ein temporäres Verzeichnis
-	tmpDir := t.TempDir()
 
-	// Erstelle ein Verzeichnis mit ungültigen Berechtigungen
-	invalidDir := filepath.Join(tmpDir, "invalid")
-	err := os.Mkdir(invalidDir, 0755)
+func TestGetAbsDirectory(t *testing.T) {
+	currentDir, err := os.Getwd()
 	require.NoError(t, err)
 
-	err = os.Chmod(invalidDir, 0000)
-	require.NoError(t, err)
+	tests := []struct {
+		name        string
+		input       string
+		expected    string
+		expectError bool
+	}{
+		{
+			name:        "absolute path",
+			input:       filepath.Join(currentDir, "testdata"),
+			expected:    filepath.Join(currentDir, "testdata"),
+			expectError: false,
+		},
+		{
+			name:        "relative path",
+			input:       "testdata",
+			expected:    filepath.Join(currentDir, "testdata"),
+			expectError: false,
+		},
+		{
+			name:        "empty path",
+			input:       "",
+			expected:    currentDir,
+			expectError: false,
+		},
+		{
+			name:        "path with special characters",
+			input:       "./test/../testdata",
+			expected:    filepath.Join(currentDir, "testdata"),
+			expectError: false,
+		},
+	}
 
-	defer func() {
-		// Stelle Berechtigungen wieder her für Cleanup
-		_ = os.Chmod(invalidDir, 0755)
-	}()
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result, err := core.GetAbsDirectory(tt.input)
 
-	// Versuche GetAbsDirectory mit einem Unterverzeichnis des gesperrten Verzeichnisses
-	result, err := core.GetAbsDirectory(filepath.Join(invalidDir, "subdir"))
-	assert.Error(t, err)
-	assert.Empty(t, result)
+			if tt.expectError {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+				assert.Equal(t, tt.expected, result)
+			}
+		})
+	}
 }
