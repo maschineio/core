@@ -49,7 +49,7 @@ func NewIntrinsicParameters(param ...any) IntrinsicParam {
 	return &iParam{params: param}
 }
 
-// iFunction holds
+// iFunction implements the IntrinsicFn interface.
 type iFunction struct {
 	name     string
 	params   IntrinsicParam
