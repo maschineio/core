@@ -8,7 +8,7 @@ require (
 	github.com/PaesslerAG/jsonpath v0.1.1
 	github.com/go-resty/resty/v2 v2.16.5
 	github.com/stretchr/testify v1.10.0
-	go.uber.org/zap v1.27.0
+	go.uber.org/zap v1.27.1
 	sigs.k8s.io/yaml v1.4.0
 )
 
